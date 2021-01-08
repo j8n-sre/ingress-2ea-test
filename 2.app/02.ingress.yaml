@@ -1,0 +1,16 @@
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: ingress-hello-svc
+  namespace: worker2
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+  - host: worker2.ajpark.kr
+    http:
+      paths:
+      - path: /hello
+        backend:
+          serviceName: hello-svc
+          servicePort: 80

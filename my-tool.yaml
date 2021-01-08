@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-tool
+  annotations:
+    kubernetes.io/change-cause: version 0.1
+spec:
+  strategy:
+    type: Recreate
+  replicas: 1
+  selector:
+    matchLabels:
+      app: my-tool
+  template:
+    metadata:
+      name: my-tool-pod
+      labels:
+        app: my-tool
+    spec:
+      hostAliases:
+      - ip: "192.168.137.11"
+        hostnames:
+        - "worker1.ajpark.kr"
+      - ip: "192.168.137.12"
+        hostnames:
+        - "worker2.ajpark.kr"
+      containers:
+      - name: my-tool-apache
+        image: jshx/tool-image:0.3
+        ports:
+        - containerPort: 80
+      nodeSelector:
+        kubernetes.io/hostname: master
+      tolerations:
+      - key: node-role.kubernetes.io/master
+        operator: Exists
+        effect: NoSchedule

@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hello-deployment
+  namespace: worker2
+spec:
+  strategy:
+    type: Recreate
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hello
+  template:
+    metadata:
+      labels:
+        app: hello
+    spec:
+      containers:
+      - name: hello
+        image: paulbouwer/hello-kubernetes:1.8
+        ports:
+        - containerPort: 8080
+      nodeSelector:
+        "kubernetes.io/os": linux
+        "kubernetes.io/hostname": worker2
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: hello-svc
+  namespace: worker2
+spec:
+  ports:
+  - port: 80
+    targetPort: 8080
+    protocol: TCP
+  selector:
+    app: hello
